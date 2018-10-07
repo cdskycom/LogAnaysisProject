@@ -18,15 +18,13 @@ This project tested under python 3.6. It's recommendation to use 3.6 or above.
 ## Database requirements
 This tool performs massive database queries and Dependents on specific views. In order to run this tool, you need create follow two views:
 
-create view accessed_articles as
+	create view accessed_articles as
+    	select log.path, log.status, log.time, articles.title, articles.slug, authors.name as author_name
+    	from log join articles on log.path = concat('/article/', articles.slug)
+    	join authors on articles.author = authors.id;
 
-    select log.path, log.status, log.time, articles.title, articles.slug, authors.name as author_name
-    from log join articles on log.path = concat('/article/', articles.slug)
-    join authors on articles.author = authors.id;
-
-create view statistic as
-
-    select to_char(time, 'FMMonth DD,YYYY') as access_date,status,count(1) as access from log group by access_date,status;
+	create view statistic as
+    	select to_char(time, 'FMMonth DD,YYYY') as access_date,status,count(1) as access from log group by access_date,status;
 
 ## Usage:
 Command Line
