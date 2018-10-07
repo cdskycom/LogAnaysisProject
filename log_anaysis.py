@@ -1,5 +1,4 @@
-
-import sys
+# -*- coding: utf-8 -*-
 import psycopg2
 
 class LogAnaysis():
