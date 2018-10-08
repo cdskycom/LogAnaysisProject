@@ -14,10 +14,11 @@ There is just one file in the Project-log_anaysis.py
 
 ## Python version
 This project tested under python 3.6. It's recommendation to use 3.6 or above.
--Python Setup and Usage-follow this instruction to get python
+
+- Python Setup and Usage-follow this instruction to get python
  https://docs.python.org/3.6/using/index.html
 
-## Database requirements
+## Get database software and data 
 As noted previously, this tool depends on the specific running environment includes Python3 environment and specific database(PostgreSql). To test this tools, you'll need database software (We've already provided by a Linux virtual machine) and data to analyze. Please follow instructions below to get database and data.
 
 - Installing the Virtual Machine
@@ -35,7 +36,7 @@ As noted previously, this tool depends on the specific running environment inclu
   Running this command will connect to your installed database server and execute the SQL commands in the downloaded file, creating tables and populating them with data.
 
 ## Data views
-This tool performs massive database queries and Dependents on specific views. In order to run this tool, you need create follow two views:
+This tool performs massive database queries and Dependents on specific views. In order to run this tool, you need create follow two views in your database:
 
 	create view accessed_articles as
     	select log.path, log.status, log.time, articles.title, articles.slug, authors.name as author_name
