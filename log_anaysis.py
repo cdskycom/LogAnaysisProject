@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/env python3
 import psycopg2
+
 
 class LogAnaysis():
     '''
@@ -8,16 +9,19 @@ class LogAnaysis():
     '''
     def __init__(self, dbname):
         self.connStr = 'dbname=' + dbname
-    
+
     def getCursor(self):
         '''
-        create connection 
+        create connection
         Args:
             None
         Returns:
-            The cursor 
+            The cursor
         '''
-        self.conn = psycopg2.connect(self.connStr)
+        try:
+            self.conn = psycopg2.connect(self.connStr)
+        except Exception as e:
+            print('Unable to connect to the database')
         cursor = self.conn.cursor()
         return cursor
 
@@ -31,8 +35,8 @@ class LogAnaysis():
         '''
         cursor = self.getCursor()
         sqlStr = 'select title, count(title) as views from ' + \
-        'accessed_articles group by title order by views desc ' + \
-        'limit %s;' % (top)
+            'accessed_articles group by title order by views desc ' + \
+            'limit %s;' % (top)
         cursor.execute(sqlStr)
         results = cursor.fetchall()
         self.conn.close()
@@ -41,24 +45,24 @@ class LogAnaysis():
     def getMostPopularAuthors(self):
         cursor = self.getCursor()
         sqlStr = 'select author_name, count(author_name) as views ' + \
-        'from accessed_articles group by author_name order by views desc;'
+            'from accessed_articles group by author_name order by views desc;'
         cursor.execute(sqlStr)
         results = cursor.fetchall()
         self.conn.close()
         return results
-    
+
     def getMostErrorsDay(self):
         cursor = self.getCursor()
         sqlStr = "select access_date, round(((select sum(access) from " + \
-        "statistic where status != '200 OK' and access_date = " + \
-        "s.access_date)::numeric/(select sum(access) from statistic where " + \
-        "access_date = s.access_date)::numeric)*100,2) as errorpercentage " + \
-        "from statistic as s group by access_date having " + \
-        "round(((select sum(access) from " + \
-        "statistic where status != '200 OK' and access_date = " + \
-        "s.access_date)::numeric/(select sum(access) from statistic where " + \
-        "access_date = s.access_date)::numeric)*100,2) > 1 order by errorpercentage " + \
-        "desc;"
+            "statistic where status != '200 OK' and access_date = " + \
+            "s.access_date)::numeric/(select sum(access) from statistic " + \
+            "where access_date = s.access_date)::numeric)*100,2) as " + \
+            "errorpercentage from statistic as s group by access_date " + \
+            "having round(((select sum(access) from " + \
+            "statistic where status != '200 OK' and access_date = " + \
+            "s.access_date)::numeric/(select sum(access) from statistic " + \
+            "where access_date = s.access_date)::numeric)*100,2) > 1 " + \
+            "order by errorpercentage desc;"
         cursor.execute(sqlStr)
         results = cursor.fetchall()
         self.conn.close()
